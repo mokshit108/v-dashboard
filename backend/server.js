@@ -19,6 +19,8 @@ app.use(bodyParser.json());
     await DataModel.createGraphDataTable();
     await DataModel.createInsightsTable();
     await DataModel.createDemographicsTable();
+    await DataModel.createExperienceTable();
+    await DataModel.createCompanyFoundedTable();
     console.log('Tables created or already exist.');    
   } catch (error) {
     console.error('Error creating tables or adding initial data:', error.message);

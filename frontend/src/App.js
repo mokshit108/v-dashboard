@@ -13,6 +13,7 @@ import NotFound from './pages/NotFound';
 import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import Analytics from './components/Analytics/Analytics';
+import ProfilePage from './components/Profile/Profile';
 
 // Layout Route for authenticated routes
 const LayoutRoute = () => {
@@ -37,7 +38,7 @@ function App() {
             <Route path="/analytics" element={<Analytics/>} />
             <Route path="/connect" element={<div className='text-white'>Connect</div>} />
             <Route path="/dealroom" element={<div className='text-white'>DealRoom</div>} />
-            <Route path="/profile" element={<div className='text-white'>Profile</div>} />
+            <Route path="/profile" element={<ProfilePage/>} />
             <Route path="/settings" element={<div className='text-white'>Settings</div>} />
             
             {/* Default route for authenticated users */}

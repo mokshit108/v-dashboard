@@ -59,6 +59,8 @@ const seedData = async () => {
     await DataModel.createGraphDataTable();
     await DataModel.createInsightsTable();
     await DataModel.createDemographicsTable();
+    await DataModel.createExperienceTable();
+    await DataModel.createCompanyFoundedTable();
 
     console.log('Inserting graph data...');
     const graphData = generateGraphData();
@@ -77,7 +79,8 @@ const seedData = async () => {
 
     // After inserting other data:
     console.log('Inserting user data...');
-    await DataModel.insertUser('trial', 'assignment123');
+    const userResult = await DataModel.insertUser('trial', 'assignment123');
+    const userId = userResult.rows[0].id;
 
     // Insert insights data with the specified values
     console.log('Inserting insights data...');
@@ -90,6 +93,15 @@ const seedData = async () => {
     await DataModel.insertDemographic('CANADA', 10.00);
     await DataModel.insertDemographic('UAE', 7.00);
 
+    // Insert experience data
+    console.log('Inserting experience data...');
+    await DataModel.insertExperience(userId, 'Company 1', 'Software Engineer', '2020-01-01', '2022-01-01', 'Worked on various projects');
+    await DataModel.insertExperience(userId, 'Company 2', 'Senior Developer', '2022-01-15', '2023-06-30', 'Led development team');
+    await DataModel.insertExperience(userId, 'Company 3', 'Technical Lead', '2023-07-15', null, 'Current position');
+    
+    // Insert company founded data
+    console.log('Inserting company founded data...');
+    await DataModel.insertCompanyFounded(userId, 'Vertex', '2018-03-15', 'Technology', 'AI-powered solutions for businesses');
     console.log('✅ Data inserted successfully!');
     process.exit(); // Exit after execution
   } catch (error) {

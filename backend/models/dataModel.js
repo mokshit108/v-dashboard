@@ -91,6 +91,69 @@ async getUserByUsername(username) {
   return result.rows[0];
 }
 
+// New methods for experience table
+async createExperienceTable() {
+  const query = `
+    CREATE TABLE IF NOT EXISTS experience (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      company_name VARCHAR(100) NOT NULL,
+      position VARCHAR(100),
+      start_date DATE,
+      end_date DATE,
+      description TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `;
+  await db.query(query);
+}
+
+async insertExperience(userId, companyName, position = null, startDate = null, endDate = null, description = null) {
+  const query = `
+    INSERT INTO experience (user_id, company_name, position, start_date, end_date, description)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING id
+  `;
+  return db.query(query, [userId, companyName, position, startDate, endDate, description]);
+}
+
+async getExperienceByUserId(userId) {
+  const query = 'SELECT * FROM experience WHERE user_id = $1 ORDER BY start_date DESC';
+  return db.query(query, [userId]);
+}
+
+// New methods for company_founded table
+async createCompanyFoundedTable() {
+  const query = `
+    CREATE TABLE IF NOT EXISTS company_founded (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      company_name VARCHAR(100) NOT NULL,
+      founding_date DATE,
+      industry VARCHAR(100),
+      description TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `;
+  await db.query(query);
+}
+
+async insertCompanyFounded(userId, companyName, foundingDate = null, industry = null, description = null) {
+  const query = `
+    INSERT INTO company_founded (user_id, company_name, founding_date, industry, description)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING id
+  `;
+  return db.query(query, [userId, companyName, foundingDate, industry, description]);
+}
+
+async getCompaniesFoundedByUserId(userId) {
+  const query = 'SELECT * FROM company_founded WHERE user_id = $1 ORDER BY founding_date DESC';
+  return db.query(query, [userId]);
+}
+
 // New methods for graph data
 async createGraphDataTable() {
   const query = `

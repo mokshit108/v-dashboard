@@ -5,6 +5,7 @@ const DataController = require('../controllers/dataController');
 // Get all data
 router.get('/all', DataController.getAllData);
 
+// User routes (protected by auth middleware)
 // Get graph data with optional filter
 router.get('/graph', DataController.getGraphData);
 
@@ -20,6 +21,14 @@ router.post('/insights', DataController.addInsight);
 // Demographics routes
 router.get('/demographics', DataController.getDemographics);
 router.post('/demographics', DataController.addDemographic);
+
+// Experience routes
+router.get('/experience/:userId', DataController.getUserExperience);
+router.post('/experience', DataController.addUserExperience);
+
+// Company founded routes
+router.get('/companies-founded/:userId', DataController.getUserCompanies);
+router.post('/companies-founded', DataController.addUserCompany);
 
 module.exports = router;
 
