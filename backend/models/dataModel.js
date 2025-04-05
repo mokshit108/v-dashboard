@@ -1,183 +1,62 @@
 const db = require('../config/database');
 
 class DataModel {
-  async createMonthlyDataTable() {
-    const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS monthly_data (
-        id SERIAL PRIMARY KEY,
-        month VARCHAR(20),
-        last_year INTEGER,
-        this_year INTEGER
-      )
-    `;
-    await db.query(createTableQuery);
-  }
 
-  async insertMonthlyData(month, lastYear, thisYear) {
-    const insertQuery = `
-      INSERT INTO monthly_data (month, last_year, this_year)
-      VALUES ($1, $2, $3)
-    `;
-    return db.query(insertQuery, [month, lastYear, thisYear]);
-  }
-
-  async getAllMonthlyData() {
-    const selectQuery = 'SELECT * FROM monthly_data';
-    return db.query(selectQuery);
-  }
-
-  async createProductTable() {
-    const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS product_data (
-        id SERIAL PRIMARY KEY,
-        product VARCHAR(100),
-        sold_amount INTEGER,
-        unit_price NUMERIC(10,2),
-        revenue NUMERIC(10,2),
-        rating NUMERIC(3,2)
-      )
-    `;
-    await db.query(createTableQuery);
-  }
-
-  async insertProductData(product, soldAmount, unitPrice, revenue, rating) {
-    const insertQuery = `
-      INSERT INTO product_data (product, sold_amount, unit_price, revenue, rating)
-      VALUES ($1, $2, $3, $4, $5)
-    `;
-    return db.query(insertQuery, [product, soldAmount, unitPrice, revenue, rating]);
-  }
-
-  async getAllProductData() {
-    const selectQuery = 'SELECT * FROM product_data';
-    return db.query(selectQuery);
-  }
-
-  async createSalesTable() {
-    const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS sales_data (
-        id SERIAL PRIMARY KEY,
-        date TIMESTAMP NOT NULL,
-        web_sales INTEGER NOT NULL,
-        offline_sales INTEGER NOT NULL
-      )
-    `;
-    await db.query(createTableQuery);
-  }
-
-  async insertSalesData(date, webSales, offlineSales) {
-    const insertQuery = `
-      INSERT INTO sales_data (date, web_sales, offline_sales)
-      VALUES ($1, $2, $3)
-    `;
-    return db.query(insertQuery, [date, webSales, offlineSales]);
-  }
-
-  async getAllSalesData() {
-    const selectQuery = 'SELECT * FROM sales_data';
-    return db.query(selectQuery);
-  }
-
-  async createFinancialSummaryTable() {
+  // Demographics table methods
+  async createDemographicsTable() {
     const query = `
-      CREATE TABLE IF NOT EXISTS financial_summary (
+      CREATE TABLE IF NOT EXISTS demographics (
         id SERIAL PRIMARY KEY,
-        purchases INTEGER,
-        revenue NUMERIC(12,2),
-        refunds NUMERIC(12,2)
-      )
-    `;
-    await db.query(query);
-
-
-  }
-
-  async insertFinancialSummary(purchases, revenue, refunds) {
-    const query = `
-      INSERT INTO financial_summary (purchases, revenue, refunds)
-      VALUES ($1, $2, $3)
-    `;
-    return db.query(query, [purchases, revenue, refunds]);
-  }
-
-  async getFinancialSummary() {
-    return db.query('SELECT * FROM financial_summary');
-  }
-
-  async createPerformanceTable() {
-    const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS performance_data (
-        id SERIAL PRIMARY KEY,
-        score INTEGER,
-        title VARCHAR(100),
-        message TEXT
-      )
-    `;
-    await db.query(createTableQuery);
-  }
-
-  async insertPerformanceData(score, title, message) {
-    const insertQuery = `
-      INSERT INTO performance_data (score, title, message)
-      VALUES ($1, $2, $3)
-    `;
-    return db.query(insertQuery, [score, title, message]);
-  }
-
-  async getPerformanceData() {
-    const selectQuery = 'SELECT * FROM performance_data';
-    return db.query(selectQuery);
-  }
-
-  async createTweetStatisticsTable() {
-    const query = `
-      CREATE TABLE IF NOT EXISTS tweet_statistics (
-        id SERIAL PRIMARY KEY,
-        date2 TIMESTAMP,
-        unique_count INTEGER,
-        cumulative_tweets INTEGER
+        country_name VARCHAR(100) NOT NULL,
+        percentage DECIMAL(5,2) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
     await db.query(query);
   }
 
-  async insertTweetStatistics(date2, uniqueCount, cumulativeTweets) {
+  async insertDemographic(countryName, percentage) {
     const query = `
-      INSERT INTO tweet_statistics (date2, unique_count, cumulative_tweets)
-      VALUES ($1, $2, $3)
+      INSERT INTO demographics (country_name, percentage)
+      VALUES ($1, $2)
+      RETURNING id
     `;
-    return db.query(query, [date2, uniqueCount, cumulativeTweets]);
+    return db.query(query, [countryName, percentage]);
   }
 
-  async getTweetStatistics() {
-    const query = 'SELECT * FROM tweet_statistics ORDER BY date2 ASC';
+  async getDemographics() {
+    const query = 'SELECT * FROM demographics ORDER BY percentage DESC';
+    return db.query(query);
+  }
+  
+
+  // New methods for insights table
+  async createInsightsTable() {
+    const query = `
+      CREATE TABLE IF NOT EXISTS insights (
+        id SERIAL PRIMARY KEY,
+        founders INTEGER,
+        investors DECIMAL(10,5),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    await db.query(query);
+  }
+
+  async insertInsight(founders, investors) {
+    const query = `
+      INSERT INTO insights (founders, investors)
+      VALUES ($1, $2)
+      RETURNING id
+    `;
+    return db.query(query, [founders, investors]);
+  }
+
+  async getInsights() {
+    const query = 'SELECT * FROM insights ORDER BY created_at DESC';
     return db.query(query);
   }
 
-  async createFeedbackTable() {
-    const query = `
-      CREATE TABLE IF NOT EXISTS feedback (
-        id SERIAL PRIMARY KEY,
-        negative INTEGER,
-        positive INTEGER,
-        neutral INTEGER
-      )
-    `;
-    await db.query(query);
-  }
-
-  async insertFeedback(negative, positive, neutral) {
-    const query = `
-      INSERT INTO feedback (negative, positive, neutral)
-      VALUES ($1, $2, $3)
-    `;
-    return db.query(query, [negative, positive, neutral]);
-  }
-
-  async getFeedback() {
-    const query = 'SELECT * FROM feedback';
-    return db.query(query);
-  }
 
   
 async createUserTable() {
@@ -210,6 +89,92 @@ async getUserByUsername(username) {
   `;
   const result = await db.query(query, [username]);
   return result.rows[0];
+}
+
+// New methods for graph data
+async createGraphDataTable() {
+  const query = `
+    CREATE TABLE IF NOT EXISTS graph_data (
+      id SERIAL PRIMARY KEY,
+      date TIMESTAMP NOT NULL,
+      visitors INTEGER NOT NULL,
+      connections INTEGER NOT NULL,
+      interactions INTEGER NOT NULL,
+      impressions INTEGER NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `;
+  await db.query(query);
+}
+
+async insertGraphData(date, visitors, connections, interactions, impressions) {
+  const query = `
+    INSERT INTO graph_data (date, visitors, connections, interactions, impressions)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING id
+  `;
+  return db.query(query, [date, visitors, connections, interactions, impressions]);
+}
+
+// Get graph data with filtering options
+async getGraphData(filter) {
+  let whereClause = '';
+  
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  // Start of current week (Sunday)
+  const thisWeekStart = new Date(today);
+  thisWeekStart.setDate(today.getDate() - today.getDay());
+  
+  // Start of last week (Sunday)
+  const lastWeekStart = new Date(thisWeekStart);
+  lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+  
+  // End of last week (Saturday)
+  const lastWeekEnd = new Date(thisWeekStart);
+  lastWeekEnd.setDate(lastWeekEnd.getDate() - 1);
+  
+  // 7 days ago
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 7);
+  
+  // 30 days ago
+  const thirtyDaysAgo = new Date(today);
+  thirtyDaysAgo.setDate(today.getDate() - 30);
+
+  switch (filter) {
+    case 'today':
+      whereClause = `WHERE date >= '${today.toISOString()}'`;
+      break;
+    case 'yesterday':
+      whereClause = `WHERE date >= '${yesterday.toISOString()}' AND date < '${today.toISOString()}'`;
+      break;
+    case 'this_week':
+      whereClause = `WHERE date >= '${thisWeekStart.toISOString()}'`;
+      break;
+    case 'last_week':
+      whereClause = `WHERE date >= '${lastWeekStart.toISOString()}' AND date < '${thisWeekStart.toISOString()}'`;
+      break;
+    case '7_days':
+      whereClause = `WHERE date >= '${sevenDaysAgo.toISOString()}'`;
+      break;
+    case '30_days':
+      whereClause = `WHERE date >= '${thirtyDaysAgo.toISOString()}'`;
+      break;
+    default:
+      // Return all data if no filter specified
+      break;
+  }
+
+  const query = `
+    SELECT * FROM graph_data 
+    ${whereClause}
+    ORDER BY date ASC
+  `;
+  return db.query(query);
 }
   
 

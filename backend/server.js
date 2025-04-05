@@ -15,14 +15,10 @@ app.use(bodyParser.json());
 // Ensure the tables are created on startup
 (async () => {
   try {
-    await DataModel.createMonthlyDataTable();
-    await DataModel.createProductTable();
-    await DataModel.createSalesTable();
-    await DataModel.createFinancialSummaryTable();
-    await DataModel.createPerformanceTable();
-    await DataModel.createTweetStatisticsTable();
-    await DataModel.createFeedbackTable();
     await DataModel.createUserTable();
+    await DataModel.createGraphDataTable();
+    await DataModel.createInsightsTable();
+    await DataModel.createDemographicsTable();
     console.log('Tables created or already exist.');    
   } catch (error) {
     console.error('Error creating tables or adding initial data:', error.message);

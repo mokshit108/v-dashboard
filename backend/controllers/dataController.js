@@ -1,8 +1,7 @@
 const DataModel = require('../models/dataModel');
 
 class DataController {
-
-  // Get All Data
+  // Existing methods
   async getAllData(req, res) {
     try {
       const monthlyData = await DataModel.getAllMonthlyData();
@@ -12,6 +11,7 @@ class DataController {
       const performanceData = await DataModel.getPerformanceData();
       const tweetStatistics = await DataModel.getTweetStatistics();
       const feedback = await DataModel.getFeedback();
+      const graphData = await DataModel.getGraphData();
 
       res.status(200).json({
         monthlyData: monthlyData.rows,
@@ -20,7 +20,8 @@ class DataController {
         financialSummary: financialSummary.rows,
         performanceData: performanceData.rows,
         tweetStatistics: tweetStatistics.rows,
-        feedback: feedback.rows
+        feedback: feedback.rows,
+        graphData: graphData.rows
       });
     } catch (error) {
       console.error('Error getting all data:', error);
@@ -28,244 +29,114 @@ class DataController {
     }
   }
 
-  // Get Financial Summary specifically
-  async getFinancialSummary(req, res) {
+  // New method for graph data
+  async getGraphData(req, res) {
     try {
-      const result = await DataModel.getFinancialSummary();
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({ message: "No financial data found" });
-      }
-
-      res.status(200).json(result.rows);
-    } catch (error) {
-      console.error('Error getting financial summary:', error);
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  // Add Financial Summary
-  async addFinancialSummary(req, res) {
-    try {
-      const { purchases, revenue, refunds } = req.body;
-
-      if (!purchases || !revenue || !refunds) {
-        return res.status(400).json({ message: "Missing required fields" });
-      }
-
-      const result = await DataModel.addFinancialSummary({
-        purchases,
-        revenue,
-        refunds
+      const filter = req.query.filter || 'all'; // Default to all if no filter specified
+      const graphData = await DataModel.getGraphData(filter);
+      
+      res.status(200).json({
+        graphData: graphData.rows
       });
-
-      res.status(201).json(result.rows[0]);
     } catch (error) {
-      console.error('Error adding financial summary:', error);
+      console.error('Error getting graph data:', error);
       res.status(500).json({ error: error.message });
     }
   }
 
-  async getMonthlyData(req, res) {
+  // Add graph data (for testing or admin purposes)
+  async addGraphData(req, res) {
     try {
-      const result = await DataModel.getAllMonthlyData();
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({ message: "No monthly data found" });
+      const { date, visitors, connections, interactions, impressions } = req.body;
+      
+      if (!date || !visitors || !connections || !interactions || !impressions) {
+        return res.status(400).json({ error: 'All fields are required' });
       }
 
-      res.status(200).json(result.rows);
+      const result = await DataModel.insertGraphData(
+        new Date(date),
+        visitors,
+        connections,
+        interactions,
+        impressions
+      );
+      
+      res.status(201).json({
+        message: 'Graph data added successfully',
+        id: result.rows[0].id
+      });
     } catch (error) {
-      console.error('Error getting monthly data:', error);
+      console.error('Error adding graph data:', error);
       res.status(500).json({ error: error.message });
     }
   }
 
-  // Add Monthly Data
-  async addMonthlyData(req, res) {
+  // New method to get insights
+  async getInsights(req, res) {
     try {
-      const { month, last_year, this_year } = req.body;
+      const insights = await DataModel.getInsights();
+      res.status(200).json({
+        insights: insights.rows
+      });
+    } catch (error) {
+      console.error('Error getting insights:', error);
+      res.status(500).json({ error: error.message });
+    }
+  }
 
-      if (!month || last_year === undefined || this_year === undefined) {
-        return res.status(400).json({ message: "Missing required fields" });
+  // New method to add insights
+  async addInsight(req, res) {
+    try {
+      const { founders, investors } = req.body;
+      
+      if (founders === undefined || investors === undefined) {
+        return res.status(400).json({ error: 'Both founders and investors fields are required' });
       }
 
-      const result = await DataModel.addMonthlyData({
-        month,
-        last_year,
-        this_year
+      const result = await DataModel.insertInsight(founders, investors);
+      
+      res.status(201).json({
+        message: 'Insight added successfully',
+        id: result.rows[0].id
       });
-
-      res.status(201).json(result.rows[0]);
     } catch (error) {
-      console.error('Error adding monthly data:', error);
+      console.error('Error adding insight:', error);
       res.status(500).json({ error: error.message });
     }
   }
 
-  // Get Performance Data
-async getPerformanceData(req, res) {
+  // New controller methods for demographics
+  async getDemographics (req, res) {
   try {
-    const result = await DataModel.getPerformanceData();
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "No performance data found" });
-    }
-
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error('Error getting performance data:', error);
-    res.status(500).json({ error: error.message });
-  }
-}
-
-// Add Performance Data
-async addPerformanceData(req, res) {
-  try {
-    const { score, title, message } = req.body;
-
-    if (score === undefined || !title || !message) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    const result = await DataModel.addPerformanceData({
-      score,
-      title,
-      message
+    const result = await DataModel.getDemographics();
+    res.status(200).json({
+      success: true,
+      data: result.rows
     });
-
-    res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Error adding performance data:', error);
-    res.status(500).json({ error: error.message });
-  }
-}
-
- // Get Sales Data
- async getSalesData(req, res) {
-  try {
-    const result = await DataModel.getAllSalesData();
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "No sales data found" });
-    }
-
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error('Error getting sales data:', error);
-    res.status(500).json({ error: error.message });
-  }
-}
-
-// Add Sales Data
-async addSalesData(req, res) {
-  try {
-    const { date, web_sales, offline_sales } = req.body;
-
-    if (!date || web_sales === undefined || offline_sales === undefined) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    const result = await DataModel.addSalesData({
-      date,
-      web_sales,
-      offline_sales
+    res.status(500).json({
+      success: false,
+      message: error.message
     });
-
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error('Error adding sales data:', error);
-    res.status(500).json({ error: error.message });
   }
-}
-
-// Get Feedback Data
-async getFeedback(req, res) {
-  try {
-    const result = await DataModel.getFeedback();
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "No feedback data found" });
-    }
-
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error('Error getting feedback data:', error);
-    res.status(500).json({ error: error.message });
   }
-}
 
-// Add Feedback Data
-async addFeedback(req, res) {
+  async addDemographic (req, res) {
   try {
-    const { customer_name, feedback_text, sentiment, date } = req.body;
-
-    if (!customer_name || !feedback_text || !sentiment || !date) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    // Validate sentiment value
-    if (!['positive', 'neutral', 'negative'].includes(sentiment)) {
-      return res.status(400).json({ 
-        message: "Invalid sentiment value. Must be 'positive', 'neutral', or 'negative'"
-      });
-    }
-
-    const result = await DataModel.addFeedback({
-      customer_name,
-      feedback_text,
-      sentiment,
-      date
+    const { countryName, percentage } = req.body;
+    const result = await DataModel.insertDemographic(countryName, percentage);
+    
+    res.status(201).json({
+      success: true,
+      data: result.rows[0]
     });
-
-    res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Error adding feedback data:', error);
-    res.status(500).json({ error: error.message });
-  }
-}
-
-// Get Product Data
-async getProductData(req, res) {
-  try {
-    const result = await DataModel.getAllProductData();
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "No product data found" });
-    }
-
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error('Error getting product data:', error);
-    res.status(500).json({ error: error.message });
-  }
-}
-
-// Add Product Data
-async addProductData(req, res) {
-  try {
-    const { product, soldAmount, unitPrice, revenue, rating } = req.body;
-
-    if (!product || soldAmount === undefined || unitPrice === undefined || 
-        revenue === undefined || rating === undefined) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    const result = await DataModel.addProductData({
-      product,
-      soldAmount,
-      unitPrice,
-      revenue,
-      rating
+    res.status(500).json({
+      success: false,
+      message: error.message
     });
-
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error('Error adding product data:', error);
-    res.status(500).json({ error: error.message });
   }
-}
 
+   }
 }
-
 module.exports = new DataController();

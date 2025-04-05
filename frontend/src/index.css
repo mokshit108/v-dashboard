@@ -14,4 +14,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.text-custom-gray {
+  color: #555555;
+}
+
+.border-cutom-gray {
+  color:#1D1D1D
+}
+
 /* Rest of your CSS remains the same */

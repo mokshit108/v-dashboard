@@ -5,28 +5,23 @@ const DataController = require('../controllers/dataController');
 // Get all data
 router.get('/all', DataController.getAllData);
 
-// Financial summary routes
-router.get('/financial', DataController.getFinancialSummary);
-router.post('/financial', DataController.addFinancialSummary);
+// Get graph data with optional filter
+router.get('/graph', DataController.getGraphData);
 
-// Monthly data routes
-router.get('/monthly', DataController.getMonthlyData);
-router.post('/monthly', DataController.addMonthlyData);
+// Add graph data (for testing or admin purposes)
+router.post('/graph', DataController.addGraphData);
 
-// Performance data routes
-router.get('/performance', DataController.getPerformanceData);
-router.post('/performance', DataController.addPerformanceData);
+// Get insights data
+router.get('/insights', DataController.getInsights);
 
-// Sales data routes
-router.get('/sales', DataController.getSalesData);
-router.post('/sales', DataController.addSalesData);
+// Add insight data
+router.post('/insights', DataController.addInsight);
 
-// Feedback routes
-router.get('/feedback', DataController.getFeedback);
-router.post('/feedback', DataController.addFeedback);
+// Demographics routes
+router.get('/demographics', DataController.getDemographics);
+router.post('/demographics', DataController.addDemographic);
 
-// Product data routes
-router.get('/products', DataController.getProductData);
-router.post('/products', DataController.addProductData);
+module.exports = router;
+
 
 module.exports = router;
