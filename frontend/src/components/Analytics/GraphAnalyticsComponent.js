@@ -352,7 +352,7 @@ const GraphAnalyticsComponent = () => {
     const additionalGrowth = getRandomGrowth();
 
     return (
-        <div className="bg-black max-md:mt-20 border-[#1D1D1D] border-b-2 rounded-lg font-manrope shadow-lg transition-all duration-300 hover:shadow-xl max-w-4xl mx-auto">
+        <div className="bg-black border-[#1D1D1D] border-b-2 rounded-lg font-manrope shadow-lg transition-all duration-300 hover:shadow-xl max-w-4xl mx-auto">
             <div className="px-4 pt-3 pb-0"> {/* Reduced horizontal and top padding */}
                 {/* Dropdowns on the left side */}
                 <div className="flex flex-wrap gap-2 mb-2"> {/* Reduced gap and bottom margin */}

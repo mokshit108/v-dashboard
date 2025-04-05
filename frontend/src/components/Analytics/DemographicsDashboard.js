@@ -82,7 +82,7 @@ const DemographicsDashboard = () => {
   }
 
   return (
-    <div className="bg-black border-[#1D1D1D] border-b-2 rounded-lg shadow p-4 mt-8 mb-4 text-white">
+    <div className="bg-black md:mx-10 border-[#1D1D1D] border-b-2 rounded-lg shadow p-4 mt-8 mb-4 text-white">
       <div className="mb-2">
         <h2 className="text-xl font-semibold">Demographics</h2>
       </div>
