@@ -13,8 +13,9 @@ const InsightsCard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
         setLoading(true);
-        const response = await axios.get('http://localhost:8000/api/insights');
+        const response = await axios.get(`${API_BASE_URL}/api/insights`);
         if (response.data && response.data.insights && response.data.insights.length > 0) {
           setInsightsData(response.data.insights[0]);
         }

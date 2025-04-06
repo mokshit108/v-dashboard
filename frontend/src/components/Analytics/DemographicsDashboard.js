@@ -11,7 +11,8 @@ const DemographicsDashboard = () => {
   useEffect(() => {
     const fetchDemographics = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/demographics");
+        const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+        const response = await axios.get(`${API_BASE_URL}/api/demographics`);
         console.log("Fetched Demographics Data:", response.data);
         
         // Check if the API response has the expected structure

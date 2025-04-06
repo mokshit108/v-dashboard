@@ -12,16 +12,17 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
+        const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
         // Assuming you have the user ID from context/auth
         const userId = localStorage.getItem('userId') || '1'; // Default to 1 for demo
         
         // Fetch companies founded
-        const companiesResponse = await fetch(`http://localhost:8000/api/companies-founded/${userId}`);
+        const companiesResponse = await fetch(`${API_BASE_URL}/api/companies-founded/${userId}`);
         if (!companiesResponse.ok) throw new Error('Failed to fetch companies');
         const companiesData = await companiesResponse.json();
         
         // Fetch experience
-        const experienceResponse = await fetch(`http://localhost:8000/api/experience/${userId}`);
+        const experienceResponse = await fetch(`${API_BASE_URL}/api/experience/${userId}`);
         if (!experienceResponse.ok) throw new Error('Failed to fetch experience');
         const experienceData = await experienceResponse.json();
       

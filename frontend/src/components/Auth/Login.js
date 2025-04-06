@@ -27,7 +27,8 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:8000/auth/login', credentials);
+      const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, credentials);
       
       // Store user info in localStorage (in a real app, you'd store the JWT token)
       localStorage.setItem('user', JSON.stringify(response.data.user));

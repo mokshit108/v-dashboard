@@ -51,8 +51,9 @@ const GraphAnalyticsComponent = () => {
     useEffect(() => {
         const fetchGraphData = async () => {
             try {
+                const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
                 setLoading(true);
-                const response = await axios.get(`http://localhost:8000/api/graph?filter=${activeFilter}`);
+                const response = await axios.get(`${API_BASE_URL}/api/graph?filter=${activeFilter}`);
 
                 if (response.data && response.data.graphData) {
                     // Make sure we have at least one data point for today/yesterday
