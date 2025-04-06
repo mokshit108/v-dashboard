@@ -56,6 +56,7 @@ const seedData = async () => {
 
   try {
     console.log('Creating tables if not exist...');
+    await DataModel.createUserTable();
     await DataModel.createGraphDataTable();
     await DataModel.createInsightsTable();
     await DataModel.createDemographicsTable();
@@ -75,7 +76,7 @@ const seedData = async () => {
     }
 
     console.log('Creating user table...');
-    await DataModel.createUserTable();
+    
 
     // After inserting other data:
     console.log('Inserting user data...');
